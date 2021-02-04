@@ -243,6 +243,19 @@ function plugin_setting_string_onelogin_saml_attr_mapping_role($network = false)
 		  '<p class="description">'.__("The attribute that contains the role of the user, For example 'memberOf'. If WordPress can't figure what role assign to the user, it will assign the default role defined at the general settings.", 'onelogin-saml-sso').'</p>';
 }
 
+function plugin_setting_boolean_onelogin_saml_extra_attr($network = false) {
+	$value = $network ? get_site_option('onelogin_saml_extra_attr') : get_option('onelogin_saml_extra_attr');
+	echo '<input type="checkbox" name="onelogin_saml_extra_attr" id="onelogin_saml_extra_attr"
+		  '.($value ? 'checked="checked"': '').'>
+		  <p class="description">'.__("Aktiviert od. Deaktiviert das Mapping von extra Attributen.", 'onelogin-saml-sso').'</p>';
+}
+
+function plugin_setting_string_onelogin_saml_extra_attr_mapping($network = false) {
+	$value = $network ? get_site_option('onelogin_saml_extra_attr_mapping') : get_option('onelogin_saml_extra_attr_mapping');
+	echo '<input type="text" name="onelogin_saml_extra_attr_mapping" id="onelogin_saml_extra_attr_mapping"
+		  value="'.esc_attr($value).'" size="70">';
+}
+
 function plugin_setting_string_onelogin_saml_role_mapping($role_value, $network = false) {
 	$value = $network ? get_site_option('onelogin_saml_role_mapping_'.$role_value) : get_option('onelogin_saml_role_mapping_'.$role_value);
 	if ($network) {
@@ -539,6 +552,10 @@ function plugin_section_role_mapping_text() {
 	echo "<p>".__("The IdP can use its own roles. In this section, you can set the mapping between IdP and WordPress roles. Accepts comma separated values. Example: <code>admin,owner,superuser</code>", 'onelogin-saml-sso')."</p>";
 }
 
+function plugin_section_extra_attr_mapping_text() {
+	echo "<p>Komma getrennte Liste mit SAML Attributen des Users die übernommen werden sollen. Attribute werden mit gleichen Namen unter <i>usermeta</i> übernommen.<br>Abruf mittels <i>get_user_meta(...)</i></p>";
+}
+
 function plugin_section_role_precedence_text() {
 	echo "<p>".__("In some cases, the IdP returns more than one role. In this secion, you can set the precedence of the different roles which makes sense if multi-role support is not enabled. The smallest integer will be the role chosen.", 'onelogin-saml-sso')."</p>";
 }
@@ -680,6 +697,7 @@ function get_onelogin_saml_settings() {
 	$idp_fields = get_onelogin_saml_settings_idp();
 	$options_fields = get_onelogin_saml_settings_options();
 	$attr_mapping_fields = get_onelogin_saml_settings_attribute_mapping();
+	$extra_attr_mapping_fields = get_onelogin_saml_settings_extra_attribute_mapping();
 	$role_mapping_fields = get_onelogin_saml_settings_role_mapping();
 	$role_precedence_fields = get_onelogin_saml_settings_role_precedence();
 	$customize_links_fields = get_onelogin_saml_settings_customize_links();
@@ -690,6 +708,7 @@ function get_onelogin_saml_settings() {
 		'idp' => $idp_fields,
 		'options' => $options_fields,
 		'attr_mapping' => $attr_mapping_fields,
+		'extra_attr_mapping' => $extra_attr_mapping_fields,
 		'role_mapping' => $role_mapping_fields,
 		'role_precedence' => $role_precedence_fields,
 		'customize_links' => $customize_links_fields,
@@ -705,6 +724,7 @@ function get_sections() {
 		'idp' => __('IDENTITY PROVIDER SETTINGS', 'onelogin-saml-sso'),
 		'options' => __('OPTIONS', 'onelogin-saml-sso'),
 		'attr_mapping' => __('ATTRIBUTE MAPPING', 'onelogin-saml-sso'),
+		'extra_attr_mapping' => __('EXTRA ATTRIBUTE MAPPING', 'onelogin-saml-sso'),
 		'role_mapping' => __('ROLE MAPPING', 'onelogin-saml-sso'),
 		'role_precedence' => __('ROLE PRECEDENCE', 'onelogin-saml-sso'),
 		'customize_links' => __('CUSTOMIZE ACTIONS AND LINKS', 'onelogin-saml-sso'),
@@ -806,6 +826,19 @@ function get_onelogin_saml_settings_attribute_mapping() {
 		),
 		'onelogin_saml_attr_mapping_rememberme' =>  array(
 			__('Remember Me', 'onelogin-saml-sso'),
+			'string'
+		)
+	);
+}
+
+function get_onelogin_saml_settings_extra_attribute_mapping() {
+	return array(
+		'onelogin_saml_extra_attr' => array(
+			__('Extra Attribute aktivieren', 'onelogin-saml-sso'),
+			'boolean'
+		),
+		'onelogin_saml_extra_attr_mapping' => array(
+			__('Liste mit Extra Attributen (Komma getrennt)', 'onelogin-saml-sso'),
 			'string'
 		)
 	);

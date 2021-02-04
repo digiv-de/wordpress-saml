@@ -437,6 +437,13 @@ function saml_acs() {
 		}
 		exit();
 	} else if ($user_id) {
+		if (get_option('onelogin_saml_extra_attr')) {
+			$extraAttrMapping = explode(',', get_option('onelogin_saml_extra_attr_mapping'));
+			foreach ($extraAttrMapping as $extraAttr) {
+				update_user_meta($user_id, $extraAttr, $attrs[$extraAttr][0]);
+			}
+		}
+
 		wp_set_current_user($user_id);
 		
 		$rememberme = false;
